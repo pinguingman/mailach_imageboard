@@ -1,0 +1,9 @@
+{% load staticfiles %}
+<video autoplay loop controls width="400">
+    <source src="{% static 'threads/source/index.mp4' %}">
+</video>
+<p>
+{% for section in sections %}
+    <a href="{% url 'threads:section_url' section.name %}"> {{section.name}} </a>
+    <p>
+{% endfor %}

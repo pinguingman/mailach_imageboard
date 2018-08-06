@@ -1,0 +1,33 @@
+{% load staticfiles %}
+
+<a href="{% url 'threads:main' %}">На главную</a>
+<a href="{% url 'threads:section_url' section_name %}">{{section_name}}</a>
+
+
+<h1>{{ thread.title  }}</h1>
+#{{thread.id_threads_messages}} {{thread.text}}
+<p>
+{% for message in messages %}
+    #{{message.id_threads_messages}}  
+    {% if message.image_name != 'False' %}
+        <p>
+        <img src="{% static message.image_name %}"  width="200" alt="Message picture">
+        <p>
+    {% endif %}
+    {% if message.video_name != 'False' %}
+        <p>
+        <video loop controls width="400">
+                 <source src="{% static message.video_name %}">
+        </video>
+        <p>
+    {% endif %}
+    {{ message.text }}
+    <p>
+{% endfor %}
+<p>
+
+<form action="{% url 'threads:thread_url' section_name thread_id %}" method="post"  enctype="multipart/form-data">
+{% csrf_token %}    
+{{form}}
+<input type="submit" value="Создать сообщение" />
+</form>

@@ -1,0 +1,71 @@
+from django.shortcuts import render, get_object_or_404
+from django.views import generic
+from django.http import HttpResponse
+from django.utils import timezone
+
+from .models import Section, Thread, Message
+from .forms import ThreadForm, MessageForm
+
+
+class IndexView(generic.ListView):
+    """ Show main page. """
+    template_name = 'threads/index.html'
+    context_object_name = 'sections'
+
+    def get_queryset(self):
+        """ Return all sections. """
+        return Section.objects.all()
+
+
+def section_view(request, section_name):
+    section = get_object_or_404(Section, name=section_name)
+    if request.method == 'POST':
+        form = ThreadForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_thread = Thread(
+                    title=form.cleaned_data['title'],
+                    text=form.cleaned_data['text'],
+                    pub_date=timezone.now(),
+                    sections=section,
+                    )
+            if 'image' in request.FILES:
+                new_thread.image = request.FILES['image']
+            if 'video' in request.FILES:
+                new_thread.video = request.FILES['video']
+            new_thread.save()
+    threads = Thread.objects.filter(sections__name=section_name)
+    form = ThreadForm()
+    return render(request, 'threads/section.html', {
+        'section_name':     section.name,
+        'threads':          threads,
+        'form':             form
+    })
+
+
+def thread_view(request, section_name, thread_id):
+    section = get_object_or_404(Section, name=section_name)
+    threads = Thread.objects.filter(sections__name=section_name)
+    thread = threads.get(id_threads_messages=thread_id)
+    if request.method == 'POST':
+        form = MessageForm(request.POST, request.FILES)
+        if form.is_valid():
+            num_in_thread = len(list(thread.message_set.all()))
+            new_message = Message(
+                    text=form.cleaned_data['text'],
+                    pub_date=timezone.now(),
+                    threads=thread
+                    )
+            if 'image' in request.FILES:
+                new_message.image = request.FILES['image']
+            if 'video' in request.FILES:
+                new_message.video = request.FILES['video']
+            new_message.save()
+    form = MessageForm()
+    messages = thread.message_set.all()
+    return render(request, 'threads/thread.html', {
+        'section_name':     section.name,
+        'thread_id':        thread.id_threads_messages,
+        'thread':           thread,
+        'messages':         messages,
+        'form':             form
+    })
