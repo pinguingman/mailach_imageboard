@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 from .models import Section, Thread, Message
 from .forms import ThreadForm, MessageForm
@@ -33,8 +34,10 @@ def section_view(request, section_name):
             if 'video' in request.FILES:
                 new_thread.video = request.FILES['video']
             new_thread.save()
-    threads = Thread.objects.filter(sections__name=section_name)
+            return HttpResponseRedirect(reverse('threads:section_url', args=(section_name)))
+    threads = Thread.objects.filter(sections__name=section_name).order_by('-last_message_pub_date')
     form = ThreadForm()
+
     return render(request, 'threads/section.html', {
         'section_name':     section.name,
         'threads':          threads,
@@ -60,6 +63,10 @@ def thread_view(request, section_name, thread_id):
             if 'video' in request.FILES:
                 new_message.video = request.FILES['video']
             new_message.save()
+            return HttpResponseRedirect(reverse(
+                'threads:thread_url',
+                kwargs={'section_name': section_name, 'thread_id': thread_id}
+                ))
     form = MessageForm()
     messages = thread.message_set.all()
     return render(request, 'threads/thread.html', {

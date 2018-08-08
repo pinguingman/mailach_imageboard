@@ -1,13 +1,21 @@
-{% load staticfiles %}
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>/{{section_name}}/</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index.css' %}" />
+</head>
+<body>
 <a href="{% url 'threads:main' %}">На главную</a>
 <h1>{{ section_name }}</h1>
 
 {% for thread in threads %}
-    <p>
-    #{{thread.id_threads_messages}}
-    <a href="{% url 'threads:thread_url' section_name thread.id_threads_messages%}">{{ thread.title }}</a>
-    <p>
+    <h3> 
+        <p>
+        #{{thread.id_threads_messages}} {{thread.pub_date}}
+        <a href="{% url 'threads:thread_url' section_name thread.id_threads_messages%}">{{ thread.title }}</a>
+        </p> 
+    </h3>
     {% if thread.image_name != 'False' %}
         <img src="{% static thread.image_name %}"  width="200" alt="Message picture">
     {% endif %}
@@ -17,7 +25,31 @@
         </video>
     {% endif %}
     <p>
+    <h2>
     {{ thread.text }}
+    </h2>
+
+    {% for message in thread.get_last_messages %}
+        #{{message.id_threads_messages}} {{message.pub_date}} 
+        <p>
+        {% if message.image_name != 'False' %}
+            <p>
+            <img src="{% static message.image_name %}"  width="200" alt="Message picture">
+            <p>
+        {% endif %}
+        {% if message.video_name != 'False' %}
+            <p>
+            <video loop controls width="400">
+                     <source src="{% static message.video_name %}">
+            </video>
+            <p>
+        {% endif %}
+        {{ message.text }}
+        <hr>
+        <p>
+    {% endfor %}
+
+    <hr>
 {% endfor %}
 <p>
 
@@ -26,3 +58,9 @@
     {{form}}
     <input type="submit" value="Создать тред" />
 </form>
+</body>
+</html>
+
+
+
+

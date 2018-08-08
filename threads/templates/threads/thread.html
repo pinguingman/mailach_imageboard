@@ -1,14 +1,37 @@
-{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>/{{section_name}}/ - {{thread.title}}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index.css' %}" />
+</head>
+<body>
 
 <a href="{% url 'threads:main' %}">На главную</a>
 <a href="{% url 'threads:section_url' section_name %}">{{section_name}}</a>
 
 
 <h1>{{ thread.title  }}</h1>
-#{{thread.id_threads_messages}} {{thread.text}}
+#{{thread.id_threads_messages}}
+{{thread.pub_date}} 
+<p>
+{% if thread.image_name != 'False' %}
+    <p>
+    <img src="{% static thread.image_name %}"  width="200" alt="Thread picture">
+    <p>
+{% endif %}
+{% if thread.video_name != 'False' %}
+    <p>
+    <video loop controls width="400">
+             <source src="{% static thread.video_name %}">
+    </video>
+    <p>
+{% endif %}
+{{thread.text}}
 <p>
 {% for message in messages %}
-    #{{message.id_threads_messages}}  
+    #{{message.id_threads_messages}} {{message.pub_date}} 
+    <p>
     {% if message.image_name != 'False' %}
         <p>
         <img src="{% static message.image_name %}"  width="200" alt="Message picture">
@@ -22,6 +45,7 @@
         <p>
     {% endif %}
     {{ message.text }}
+    <hr>
     <p>
 {% endfor %}
 <p>
@@ -31,3 +55,7 @@
 {{form}}
 <input type="submit" value="Создать сообщение" />
 </form>
+</body>
+</html>
+
+

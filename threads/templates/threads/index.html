@@ -1,9 +1,21 @@
-{% load staticfiles %}
-<video autoplay loop controls width="400">
-    <source src="{% static 'threads/source/index.mp4' %}">
-</video>
-<p>
-{% for section in sections %}
-    <a href="{% url 'threads:section_url' section.name %}"> {{section.name}} </a>
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title> Mailach - главная </title>
+    <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index.css' %}" />
+</head>
+
+<body>
+    <video autoplay loop controls width="400">
+        <source src="{% static 'threads/source/index.mp4' %}">
+    </video>
     <p>
-{% endfor %}
+    {% for section in sections %}
+        <a href="{% url 'threads:section_url' section.name %}"> {{section.name}} </a>
+        <p>
+    {% endfor %}
+</body>
+</html>
