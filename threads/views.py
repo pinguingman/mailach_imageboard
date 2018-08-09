@@ -34,7 +34,10 @@ def section_view(request, section_name):
             if 'video' in request.FILES:
                 new_thread.video = request.FILES['video']
             new_thread.save()
-            return HttpResponseRedirect(reverse('threads:section_url',  kwargs={'section_name': section_name}))
+            return HttpResponseRedirect(reverse(
+                'threads:thread_url',
+                kwargs={'section_name': section_name, 'thread_id': new_thread.id_threads_messages}
+                ))
     threads = Thread.objects.filter(sections__name=section_name).order_by('-last_message_pub_date')
     form = ThreadForm()
 
