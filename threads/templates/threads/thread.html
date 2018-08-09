@@ -2,10 +2,12 @@
 <html>
 
 <head>
-    <title>/{{section_name}}/ - {{thread.title}}</title>
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     {% load staticfiles %}
+    {% load widget_tweaks %}
+    <title>/{{section_name}}/ - {{thread.title}}</title>
+    <link rel="shortcut icon" href="{% static 'threads/source/icon.png' %}" type="image/png">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> 
     <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index.css' %}" />
 </head>
 
@@ -15,22 +17,20 @@
     <h1>{{ thread.title  }}</h1>
     <div class="oppost-wrapper">
         <div class="post reply ">
-            <b>#{{thread.id_threads_messages}} {{thread.pub_date}}</b>
-            {% if thread.image_name != 'False' %}
+            <b>#{{thread.id_threads_messages}} {{thread.pub_date}}</b> {% if thread.image_name != 'False' %}
             <p>
                 <a href="{% static thread.image_name %}" target="_blank" onclick="{% static thread.image_name %}">
                         <img src="{% static thread.image_name %}" width="200">
                         </a>
             </p>
-            {% endif %}
-            {% if thread.video_name != 'False' %}
+            {% endif %} {% if thread.video_name != 'False' %}
             <p>
                 <video loop controls width="400">
                     <source src="{% static thread.video_name %}">
                 </video>
             </p>
             {% endif %}
-            <blockquote>{{thread.text}}</blockquote>
+            <blockquote><pre>{{thread.text}}</pre></blockquote>
         </div>
     </div>
     <p>
@@ -54,19 +54,20 @@
                         </video>
                     </p>
                     {% endif %}
-                    <blockquote class="post-message">{{ message.text }}</blockquote>
+                    <blockquote class="post-message"><pre>{{ message.text }}</pre></blockquote>
                 </p>
             </div>
         </div>
-        <hr>
-        {% endfor %}
+        <hr> {% endfor %}
     </p>
-    <form action="{% url 'threads:thread_url' section_name thread_id %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %} {{form}}
+    <form action="{% url 'threads:thread_url' section_name thread_id %}" method="post" enctype="multipart/form-data" class="new-thread">
+        {% csrf_token %}
+            <p>
+                {{ form.text.label }} {{ form.text}}
+            </p>
+            {{ form.image.label }} {{ form.image}} {{ form.video.label }} {{ form.video}}
         <input type="submit" value="Создать сообщение" />
     </form>
-
-
     <!-- Bootstrap javascript (at the end so site'll be loaded faster) -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
