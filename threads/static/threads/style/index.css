@@ -23,6 +23,8 @@ a,
     background-color: #DDDDDD;
     border: solid 1px #CCCCCC;
     border-radius: 5px;
+    margin: 2px
+    padding-left: 10px;
 }
 
 .new-thread {

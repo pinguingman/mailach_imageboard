@@ -1,1 +1,5 @@
 *.pyc
+db.sqlite3
+settings.py
+threads/static/threads/images/**
+threads/static/threads/videos/**
