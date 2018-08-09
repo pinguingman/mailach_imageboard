@@ -1,61 +1,66 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>/{{section_name}}/ - {{thread.title}}</title>
     {% load staticfiles %}
-    <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'threads/style/index2.css' %}" />
 </head>
+
 <body>
-
-<a href="{% url 'threads:main' %}">На главную</a>
-<a href="{% url 'threads:section_url' section_name %}">{{section_name}}</a>
-
-
-<h1>{{ thread.title  }}</h1>
-#{{thread.id_threads_messages}}
-{{thread.pub_date}} 
-<p>
-{% if thread.image_name != 'False' %}
+    <a href="{% url 'threads:main' %}">На главную</a>
+    <a href="{% url 'threads:section_url' section_name %}">{{section_name}}</a>
+    <h1>{{ thread.title  }}</h1>
+    <div class="oppost-wrapper">
+        <div class="post reply ">
+            #{{thread.id_threads_messages}} {{thread.pub_date}} {% if thread.image_name != 'False' %}
+            <p>
+                <a href="{% static thread.image_name %}" target="_blank" onclick="{% static thread.image_name %}">
+                        <img src="{% static thread.image_name %}" width="200">
+                        </a>
+            </p>
+            {% endif %} {% if thread.video_name != 'False' %}
+            <p>
+                <video loop controls width="400">
+                    <source src="{% static thread.video_name %}">
+                </video>
+            </p>
+            {% endif %}
+            <blockquote>{{thread.text}}</blockquote>
+        </div>
+    </div>
     <p>
-    <img src="{% static thread.image_name %}"  width="200" alt="Thread picture">
-    <p>
-{% endif %}
-{% if thread.video_name != 'False' %}
-    <p>
-    <video loop controls width="400">
-             <source src="{% static thread.video_name %}">
-    </video>
-    <p>
-{% endif %}
-{{thread.text}}
-<p>
-{% for message in messages %}
-    #{{message.id_threads_messages}} {{message.pub_date}} 
-    <p>
-    {% if message.image_name != 'False' %}
-        <p>
-        <img src="{% static message.image_name %}"  width="200" alt="Message picture">
-        <p>
-    {% endif %}
-    {% if message.video_name != 'False' %}
-        <p>
-        <video loop controls width="400">
-                 <source src="{% static message.video_name %}">
-        </video>
-        <p>
-    {% endif %}
-    {{ message.text }}
-    <hr>
-    <p>
-{% endfor %}
-<p>
-
-<form action="{% url 'threads:thread_url' section_name thread_id %}" method="post"  enctype="multipart/form-data">
-{% csrf_token %}    
-{{form}}
-<input type="submit" value="Создать сообщение" />
-</form>
+        {% for message in messages %}
+        <div class="post-wrapper">
+            <div class="post reply ">
+                <div class="post-details">
+                #{{message.id_threads_messages}} {{message.pub_date}}
+            </div>
+                <p>
+                    {% if message.image_name != 'False' %}
+                    <p>
+                        <a href="{% static message.image_name %}" target="_blank" onclick="{% static message.image_name %}">
+                        <img src="{% static message.image_name %}" width="200">
+                        </a>
+                    </p>
+                    {% endif %} {% if message.video_name != 'False' %}
+                    <p>
+                        <video loop controls width="400">
+                            <source src="{% static message.video_name %}">
+                        </video>
+                    </p>
+                    {% endif %}
+                    <blockquote class="post-message">{{ message.text }}</blockquote>
+                    <hr>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </p>
+    <form action="{% url 'threads:thread_url' section_name thread_id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %} {{form}}
+        <input type="submit" value="Создать сообщение" />
+    </form>
 </body>
+
 </html>
-
-
