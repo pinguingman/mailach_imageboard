@@ -20,6 +20,7 @@ class IndexView(generic.ListView):
 
 def section_view(request, section_name):
     section = get_object_or_404(Section, name=section_name)
+    threads = Thread.objects.filter(sections__name=section_name).order_by('-last_message_pub_date')
     if request.method == 'POST':
         form = ThreadForm(request.POST, request.FILES)
         if form.is_valid():
@@ -38,9 +39,13 @@ def section_view(request, section_name):
                 'threads:thread_url',
                 kwargs={'section_name': section_name, 'thread_id': new_thread.id_threads_messages}
                 ))
-    threads = Thread.objects.filter(sections__name=section_name).order_by('-last_message_pub_date')
+        else:
+            return render(request, 'threads/section.html', {
+                'section_name':     section.name,
+                'threads':          threads,
+                'form':             form
+            })
     form = ThreadForm()
-
     return render(request, 'threads/section.html', {
         'section_name':     section.name,
         'threads':          threads,
@@ -52,6 +57,7 @@ def thread_view(request, section_name, thread_id):
     section = get_object_or_404(Section, name=section_name)
     threads = Thread.objects.filter(sections__name=section_name)
     thread = threads.get(id_threads_messages=thread_id)
+    messages = thread.message_set.all()
     if request.method == 'POST':
         form = MessageForm(request.POST, request.FILES)
         if form.is_valid():
@@ -70,8 +76,15 @@ def thread_view(request, section_name, thread_id):
                 'threads:thread_url',
                 kwargs={'section_name': section_name, 'thread_id': thread_id}
                 ))
+        else:
+            return render(request, 'threads/thread.html', {
+                'section_name':     section.name,
+                'thread_id':        thread.id_threads_messages,
+                'thread':           thread,
+                'messages':         messages,
+                'form':             form
+            })    
     form = MessageForm()
-    messages = thread.message_set.all()
     return render(request, 'threads/thread.html', {
         'section_name':     section.name,
         'thread_id':        thread.id_threads_messages,

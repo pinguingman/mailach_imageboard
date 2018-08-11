@@ -39,6 +39,9 @@ class Thread(models.Model):
         else:
             return self.message_set.all()
 
+    def messages_count(self, count=3):
+        return len(self.message_set.all()) - count
+
     def save(self, is_new=True, *args, **kwargs):
         if is_new:
             self.last_message_pub_date = timezone.now()

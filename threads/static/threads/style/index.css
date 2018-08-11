@@ -16,14 +16,19 @@ a,
     margin: 0px;
     padding: 0px;
     background: transparent;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .reply {
     background-color: #DDDDDD;
     border: solid 1px #CCCCCC;
     border-radius: 5px;
-    margin: 2px
+    margin: 2px;
+    padding-left: 10px;
+}
+
+.oppost {
+    margin: 2px;
     padding-left: 10px;
 }
 
