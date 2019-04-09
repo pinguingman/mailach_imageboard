@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 
@@ -20,16 +20,16 @@ class IndexView(generic.ListView):
 
 def section_view(request, section_name):
     section = get_object_or_404(Section, name=section_name)
-    threads = Thread.objects.filter(sections__name=section_name).order_by('-last_message_pub_date')
+    threads = Thread.objects.filter(
+        sections__name=section_name).order_by('-last_message_pub_date')
     if request.method == 'POST':
         form = ThreadForm(request.POST, request.FILES)
         if form.is_valid():
             new_thread = Thread(
-                    title=form.cleaned_data['title'],
-                    text=form.cleaned_data['text'],
-                    pub_date=timezone.now(),
-                    sections=section,
-                    )
+                title=form.cleaned_data['title'],
+                text=form.cleaned_data['text'],
+                sections=section
+            )
             if 'image' in request.FILES:
                 new_thread.image = request.FILES['image']
             if 'video' in request.FILES:
@@ -37,19 +37,20 @@ def section_view(request, section_name):
             new_thread.save()
             return HttpResponseRedirect(reverse(
                 'threads:thread_url',
-                kwargs={'section_name': section_name, 'thread_id': new_thread.id_threads_messages}
-                ))
+                kwargs={'section_name': section_name,
+                        'thread_id': new_thread.id_threads_messages}
+            ))
         else:
             return render(request, 'threads/section.html', {
-                'section_name':     section.name,
-                'threads':          threads,
-                'form':             form
+                'section_name': section.name,
+                'threads': threads,
+                'form': form
             })
     form = ThreadForm()
     return render(request, 'threads/section.html', {
-        'section_name':     section.name,
-        'threads':          threads,
-        'form':             form
+        'section_name': section.name,
+        'threads': threads,
+        'form': form
     })
 
 
@@ -61,12 +62,11 @@ def thread_view(request, section_name, thread_id):
     if request.method == 'POST':
         form = MessageForm(request.POST, request.FILES)
         if form.is_valid():
-            num_in_thread = len(list(thread.message_set.all()))
+            # num_in_thread = len(list(thread.message_set.all()))
             new_message = Message(
-                    text=form.cleaned_data['text'],
-                    pub_date=timezone.now(),
-                    threads=thread
-                    )
+                text=form.cleaned_data['text'],
+                threads=thread
+            )
             if 'image' in request.FILES:
                 new_message.image = request.FILES['image']
             if 'video' in request.FILES:
@@ -75,20 +75,20 @@ def thread_view(request, section_name, thread_id):
             return HttpResponseRedirect(reverse(
                 'threads:thread_url',
                 kwargs={'section_name': section_name, 'thread_id': thread_id}
-                ))
+            ))
         else:
             return render(request, 'threads/thread.html', {
-                'section_name':     section.name,
-                'thread_id':        thread.id_threads_messages,
-                'thread':           thread,
-                'messages':         messages,
-                'form':             form
-            })    
+                'section_name': section.name,
+                'thread_id': thread.id_threads_messages,
+                'thread': thread,
+                'messages': messages,
+                'form': form
+            })
     form = MessageForm()
     return render(request, 'threads/thread.html', {
-        'section_name':     section.name,
-        'thread_id':        thread.id_threads_messages,
-        'thread':           thread,
-        'messages':         messages,
-        'form':             form
+        'section_name': section.name,
+        'thread_id': thread.id_threads_messages,
+        'thread': thread,
+        'messages': messages,
+        'form': form
     })

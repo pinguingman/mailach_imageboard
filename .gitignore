@@ -3,3 +3,4 @@ db.sqlite3
 mailach/settings.py
 threads/static/threads/images/**
 threads/static/threads/videos/**
+threads/migrations/**

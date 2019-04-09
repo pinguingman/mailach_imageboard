@@ -8,14 +8,18 @@ class Section(models.Model):
     """
     example .b/ vape./ etc
     """
-    name = models.CharField(max_length=20)
-    number_of_threads_and_messages = models.IntegerField(default=0)
+    name = models.CharField(max_length=20, unique=True)
+    _number_of_threads_and_messages = models.IntegerField(default=0, editable=False)
+    creation_date = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
         return self.name
 
+    def get_number_of_threads_and_messages(self):
+        return self._number_of_threads_and_messages
+
     def inc_number(self):
-        self.number_of_threads_and_messages += 1
+        self._number_of_threads_and_messages += 1
         self.save()
 
 
@@ -26,14 +30,16 @@ class Thread(models.Model):
     id_threads_messages = models.IntegerField(default=0)
     title = models.CharField(max_length=100, default='Title')
     text = models.TextField(max_length=1000)
-    pub_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=timezone.now)
     last_message_pub_date = models.DateTimeField()
     sections = models.ForeignKey(Section, null=True, on_delete=models.CASCADE)
-    image = models.ImageField(null=True, blank=True, upload_to='threads/static/threads/images')
-    video = models.FileField(null=True, blank=True, upload_to='threads/static/threads/videos')
+    image = models.ImageField(null=True, blank=True,
+                              upload_to='threads/static/threads/images')
+    video = models.FileField(null=True, blank=True,
+                             upload_to='threads/static/threads/videos')
 
     def get_last_messages(self, count=3):
-        message_count = len(self.message_set.all())
+        message_count = self.message_set.count()
         if message_count > 3:
             return self.message_set.all()[message_count - count:]
         else:
@@ -46,7 +52,7 @@ class Thread(models.Model):
         if is_new:
             self.last_message_pub_date = timezone.now()
             self.sections.inc_number()
-            self.id_threads_messages = self.sections.number_of_threads_and_messages
+            self.id_threads_messages = self.sections.get_number_of_threads_and_messages()
         super().save(args, kwargs)
 
     def __str__(self):
@@ -72,10 +78,12 @@ class Message(models.Model):
     """
     id_threads_messages = models.IntegerField(default=0)
     text = models.TextField(max_length=1000)
-    pub_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=timezone.now)
     threads = models.ForeignKey(Thread, on_delete=models.CASCADE)
-    image = models.ImageField(null=True, blank=True, upload_to='threads/static/threads/images')
-    video = models.FileField(null=True, blank=True, upload_to='threads/static/threads/videos')
+    image = models.ImageField(null=True, blank=True,
+                              upload_to='threads/static/threads/images')
+    video = models.FileField(null=True, blank=True,
+                             upload_to='threads/static/threads/videos')
 
     def __str__(self):
         return self.text
@@ -84,9 +92,8 @@ class Message(models.Model):
         self.threads.last_message_pub_date = timezone.now()
         self.threads.save(is_new=False)
         self.threads.sections.inc_number()
-        self.id_threads_messages = self.threads.sections.number_of_threads_and_messages
+        self.id_threads_messages = self.threads.sections.get_number_of_threads_and_messages()
         super().save(args, kwargs)
-
 
     def image_name(self):
         if self.image.name == '':
