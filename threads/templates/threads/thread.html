@@ -15,7 +15,7 @@
     <a href="{% url 'threads:section_url' section_name %}">{{section_name}}</a>
     <h1>{{ thread.title  }}</h1>
     <div class="oppost">
-        <b>#{{thread.id_threads_messages}} {{thread.pub_date}}</b> {% if thread.image_name != 'False' %}
+        <b>#{{thread.id_threads_messages}} {{thread.creation_date}}</b> {% if thread.image_name != 'False' %}
         <p>
             <a href="{% static thread.image_name %}" target="_blank" onclick="{% static thread.image_name %}">
                         <img src="{% static thread.image_name %}" width="200">
@@ -34,7 +34,7 @@
         {% for message in messages %}
         <div class="reply ">
             <b>
-                    #{{message.id_threads_messages}} {{message.pub_date}}
+                    #{{message.id_threads_messages}} {{message.creation_date}}
                 </b>
             <p>
                 {% if message.image_name != 'False' %}

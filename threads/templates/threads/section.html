@@ -22,7 +22,7 @@
     <div class="thread">
         <div>
             <h3>
-<b>#{{thread.id_threads_messages}} {{thread.pub_date}}</b>
+<b>#{{thread.id_threads_messages}} {{thread.creation_date}}</b>
 <a href="{% url 'threads:thread_url' section_name thread.id_threads_messages%}">{{ thread.title }}</a>
  
 </h3> {% if thread.image_name != 'False' %}
@@ -43,7 +43,7 @@
         <em><small> Пропущено сообщений: {{ thread.messages_count }}. Нажмите <a href="{% url 'threads:thread_url' section_name thread.id_threads_messages%}">ответ</a>, чтобы посмотреть.</small></em> {% endif %} {% for message in thread.get_last_messages %}
         <div class="reply">
             <div>
-                <b>#{{message.id_threads_messages}} {{message.pub_date}} </b>
+                <b>#{{message.id_threads_messages}} {{message.creation_date}} </b>
                 <p>
                     {% if message.image_name != 'False' %}
                     <p>
